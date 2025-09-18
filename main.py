@@ -27,7 +27,7 @@ def key_prompt():
 
 def print_menu():
     print("Key: ", end='')
-    if show_key == True:
+    if show_key:
         print(key_holder)
     else:
         print('•'*len(key_holder))
@@ -52,7 +52,7 @@ def reveal_key():
     global show_key
     
     #If true then false, if not true then true
-    if show_key == True:
+    if show_key:
         show_key = False
     else:
         show_key = True
@@ -78,6 +78,9 @@ def main():
                 reveal_key()
             case 5:
                 break
+            case _:
+                print(f"{userInput} is not valid, Please try again.")
+                input()
             
         os.system('cls')
 
