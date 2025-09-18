@@ -1,93 +1,86 @@
 from cryptography.fernet import Fernet
 import os
     
-#top level
+show_key = False
+key_holder = "blablabla"
 
-# Note: You can set the int len for fernets key generation. For my sake it's at 16
-
-private_key = 0
-key_cases   = 0
-hide_key    = True
-message     = ""
-
-while True:
-    # Prompt user if they want to gen or enter key
-    # Change var name later
-    userInput = int(input("1. Enter Private Key \n2. Generate a Private Key \n> "))
+# Initial phase before going into main loop
+# Purpose is to generate a private key for the users encryption/decryption cases
+# Keys can then be distributed to others or stored to decrypt certain messages
+def key_prompt():
+    global key_holder
+    print("Please select an option:")
     
-    if userInput == 1:
-        os.system('clear')        
-        private_key = input('Enter your Private Key \n> ')
-        break
-    elif userInput == 2:
-        private_key = Fernet.generate_key()
-        break
-    else:
-        print("Invalid Command")
-        
-key_cases = Fernet(private_key)
-    
-def display_menu():
-
-    print("Ecryption Thingy".expandtabs(tabsize=10))
-    print("Private Key: ".expandtabs(tabsize=5), end='')
-    
-    if hide_key == True:
-        print('*' * len(private_key))
-    elif hide_key == False:
-        print(private_key)
-        
-    # ------------------------ #
-    print('-'*60)
-    print("1. Encrypt \n2. Decrypt \n3. Change Key \n4. Show/Hide Key \n5. Quit", end='\n')
-    userInput = int(input('> '))
-    
+    userInput = int(input("1. Enter Key \n2. Generate Key \n> "))
     match userInput:
+        # Not working right now
+        # Will fix later, not now in this moment because I'm going to eat
         case 1:
-            print("ec")
-            encrypt()
+            os.system('cls')
+            key = input("Enter your key: ")
+            return Fernet(key)
         case 2:
-            decrypt()
-        case 3:
-            hide_key = change_key()
-        case 4:
-            reveal_key()
-        case 5:
-            quit()
-            
+            os.system('cls')
+            key = Fernet.generate_key()
+            key_holder = key
+            return Fernet(key)
 
-def encrypt():
-    message = fetch_message()
-    #token = key_cases.encrypt(message)
-    print(f"Encrypted:")
+def print_menu():
+    print("Key: ", end='')
+    if show_key == True:
+        print(key_holder)
+    else:
+        print('•'*len(key_holder))
+    print("1. Encrypt \n2. Decrypt \n3. Swap Key \n4. Show Key \n5. Quit")
+    print(show_key)
+    
+def fetch_message():
+    # encode used to convert str -> bytes
+    # Why? Fernet functions parameters passes through bytes, not strings
+    return input("Enter message: ").encode()
 
-def decrypt():
-    token = fetch_token()
-    print("Decrypted: " + key_cases.decrypt(token))
+def encrypt(msg):
+    return key.encrypt(msg)
+
+def decrypt(msg):
+    return key.decrypt(msg)    
+
+def swap_key():
+    print("Meow")
     
 def reveal_key():
-    if hide_key == False: 
-        return True
-    elif hide_key == True: 
-        return False
-        
-def change_key():
-    print("Finish Later")
+    global show_key
+    
+    #If true then false, if not true then true
+    if show_key == True:
+        show_key = False
+    else:
+        show_key = True
 
-def fetch_message():
-    return input("Enter your message: ")
-
-def fetch_token():
-    return input("Enter your token: ")
-
+# Main Program
 def main():
-    display_menu()
-    
-    
+    while True:
+        print_menu()
+        userInput = int(input("Select an Option \n> "))
 
-   
-    
+        match userInput:
+            case 1: 
+                message = fetch_message()
+                print(encrypt(message))
+                input()
+            case 2:
+                message = fetch_message()
+                print(decrypt(message))
+                input()
+            case 3:
+                print("I'll do this later :3")
+            case 4:
+                reveal_key()
+            case 5:
+                break
+            
+        os.system('cls')
+
 if __name__ == "__main__":
+    key = key_prompt()
     main()
-    
-    
